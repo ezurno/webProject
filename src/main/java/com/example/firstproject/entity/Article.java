@@ -1,6 +1,7 @@
 package com.example.firstproject.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 
 
 @Entity
+@NoArgsConstructor // 디폴트생성자 어노테이션
 @AllArgsConstructor // this.함수 대신 어노테이션
 @ToString // toString 함수 대신 어노테이션
 public class Article {
@@ -23,6 +25,7 @@ public class Article {
 
     @Column
     private String content;
+    
 
     /*
     public Article(Long id, String title, String content) {

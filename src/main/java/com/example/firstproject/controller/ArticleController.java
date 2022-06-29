@@ -6,8 +6,13 @@ import com.example.firstproject.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j // log를 사용하기 위해 어노테이션
@@ -38,5 +43,34 @@ public class ArticleController {
         log.info(saved.toString());
 
         return "";
+    }
+
+    @GetMapping("/articles/{id}") /*@PathVariable url Path로부터 입력이된다.  */
+    public String show(@PathVariable Long id, Model model) {
+        log.info("id = " + id);
+
+            //1. id로 데이터를 가져옴
+            Article articleEntity = articleRepository.findById(id).orElse(null);
+                // id값을 통해 찾을 때 값이 없으면 null이 담겨짐
+            //Optional<Article> articleEntity = articleRepository.findById(id);
+                // return 타입이 달라서 Optional
+
+            //2. 가져온 데이터를 모델에 등록
+            model.addAttribute("article",articleEntity);
+
+            //3. 보여줄 페이지를 설정
+            return "articles/show";
+    }
+
+    @GetMapping("/articles")
+    public String index(Model model) {
+        // 1. 모든 Article를 가져옴
+        List<Article>articleEntityList = (List<Article>) articleRepository.findAll();
+            // articleRepository의 반환타입을 List<Article>로 강제변형
+        // 2.  가져온 Article 묶음을 뷰로 전달
+        model.addAttribute("articleList", articleEntityList);
+
+        // 3. 뷰 페이지를 설정
+        return "articles/index"; //articles/index.mustache
     }
 }
