@@ -1,6 +1,7 @@
 package com.example.firstproject.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 
 
 @Entity
+@Getter // Get함수 어노테이션 *롬복
 @NoArgsConstructor // 디폴트생성자 어노테이션
 @AllArgsConstructor // this.함수 대신 어노테이션
 @ToString // toString 함수 대신 어노테이션
@@ -41,5 +43,10 @@ public class Article {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 '}';
-    }*/
+    }
+
+    public Long getId() {
+        return id;
+    }
+    */
 }

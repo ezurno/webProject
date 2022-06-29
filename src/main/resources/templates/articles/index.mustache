@@ -11,11 +11,16 @@
     {{#articleList}} <!-- 범위 내 까지 article을 사용한단 의미 -->
     <tr>
         <th>{{id}}</th>
-        <td>{{title}}</td>
+        <td><a href = "/articles/{{id}}">{{title}}</a></td>
+        <!--title을 누르면 해당 id로 가게끔 설정 -->
         <td>{{content}}</td>
     </tr>
     {{/articleList}}
     </tbody>
 </table>
+
+<a href = "/articles/new">New Article</a>
+<!--New article을 누르면 새로운 Article를 설정 할 수 있게 함-->
+
 
 {{>layouts/footer}}

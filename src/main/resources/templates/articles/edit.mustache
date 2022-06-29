@@ -1,0 +1,26 @@
+{{>layouts/header}}
+
+<form class = "container" action="/articles/update" method="post">
+    <input name="id" type="hidden" value="{{id}}" />
+    <!--id를 숨겨서 가져오게 만듬-->
+    <div class = "mb-3">
+        <label class = "form-label">제목</label>
+        <input type = "text" class = "form-control" name = "title"
+        value="{{article.title}}">
+        <!--value 를 사용해 article.title값을 가져온다. *수정을 위해서-->
+    </div>
+    <div class = "mb-3">
+        <label class = "form-label">내용</label>
+        <textarea class = "form-control" rows="3" name = "content"
+        >{{article.content}}</textarea>
+        <!--textarea는 value x 그냥 내용에 article.content 사용-->
+        <!--DIV 자체를 #article로 묶으면 article.를 안쓰고 content만 써도 됨-->
+    </div>
+
+    <button type = "submit" class = "btn btn-primary">SUBMIT</button>
+
+    <a href="/articles/{{article.id}}">Back</a>
+    <!--뒤로가기 수정-->
+</form>
+
+{{>layouts/footer}}

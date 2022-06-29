@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +44,8 @@ public class ArticleController {
         //save가 잘 작동되는지 확인차 출력
         log.info(saved.toString());
 
-        return "";
+        return "redirect:/articles/" + saved.getId();
+        //redirect 적용, getId()함수를 만들기 위해 Article Entity로 이동
     }
 
     @GetMapping("/articles/{id}") /*@PathVariable url Path로부터 입력이된다.  */
@@ -72,5 +75,58 @@ public class ArticleController {
 
         // 3. 뷰 페이지를 설정
         return "articles/index"; //articles/index.mustache
+    }
+
+    @GetMapping("/articles/{id}/edit") // 여기선 중괄호 하나만!!
+    //*** {article.id}지만 edit함수의 매개변수 Long id 와 같아야 하므로 articles.를 빼준다.
+    public String edit(@PathVariable Long id, Model model) {
+        //수정할 데이터 가져오기
+        Article articleEntity = articleRepository.findById(id).orElse(null);
+        //만약 없다면 null로 반환
+
+        //모델에 데이터 등록
+        model.addAttribute("article", articleEntity);
+        
+        //뷰 페이지 설정
+        return"articles/edit";//해당 페이지가 getMapping으로 요청되면 edit을 반환한다.
+    }
+
+    @PostMapping("/articles/update")
+    public String update(ArticleForm form) {
+        log.info(form.toString());//제대로 데이터를 받았는지 확인
+
+        //1. DTO를 Entity로 변환
+        Article articleEntity = form.toEntity();
+        form.toEntity(); //ArticleForm에 만들어 놓은 toEntity함수
+
+        //2. Entity를 DB로 저장
+            //2-1. 수정
+        Article target = articleRepository.findById(articleEntity.getId()).orElse(null);
+            //만약에 없다면 null 리턴 함수 orElse
+            //2-2. 기존 데이터 값을 갱신
+        if (target != null) {
+            articleRepository.save(articleEntity);
+        }
+        //3. 수정결과를 페이지로 리다이렉트
+        return "redirect:/articles/" + articleEntity.getId();
+    }
+
+    @GetMapping("/articles/{id}/delete") //공식적으로 지원을 안하므로
+        // Get방식을 사용하기 위해 DeleteMapping이 아닌 Get
+    public String Delete(@PathVariable Long id, RedirectAttributes rttr) {
+        //RedirectAttributes rttr로 메세지를 보내줌
+        log.info("삭제 명령이 내려졌음.");
+
+        //1. 삭제 대상을 기재 Target으로 지정
+        Article target = articleRepository.findById(id).orElse(null);
+        log.info(target.toString());
+        //2. 대상 삭제
+        if (target != null) {
+            articleRepository.delete(target);
+            rttr.addFlashAttribute("msg", "삭제가 완료되었습니다.");
+            //메세지 출력 함수 addFlashAttribute
+        }
+        //3. 결과 페이지로 리다이렉트
+        return "redirect:/articles/";
     }
 }
