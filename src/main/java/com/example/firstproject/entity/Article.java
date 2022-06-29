@@ -1,11 +1,17 @@
 package com.example.firstproject.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.ToString;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+
 @Entity
+@AllArgsConstructor // this.함수 대신 어노테이션
+@ToString // toString 함수 대신 어노테이션
 public class Article {
 
     @Id // 대푯값을 지정 like a 주민등록번호
@@ -18,6 +24,7 @@ public class Article {
     @Column
     private String content;
 
+    /*
     public Article(Long id, String title, String content) {
         this.id = id;
         this.title = title;
@@ -31,5 +38,5 @@ public class Article {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 '}';
-    }
+    }*/
 }
