@@ -17,68 +17,60 @@ import java.util.List;
 @RestController //RestAPI 용 컨트롤러, 데이터를 JSON으로 반환
 public class ArticleApiController {
 
-
+    @Autowired // 외부에서 가져옴
+    private ArticleService articleService;
 //    @Autowired // 외부에서 가져옴, 자동 연결
 //    private ArticleRepository articleRepository;
     //GET
-//    @GetMapping("/api/articles")
-//    public List<Article> index() {
-//        return (List<Article>) articleRepository.findAll();
-//    }
+    @GetMapping("/api/articles")
+    public List<Article> index() {
+        return (List<Article>) articleService.index();
+    } // articleRepository 를 aritcleService로 변경 및 index 함수 사용
 //
-//    @GetMapping("/api/articles/{id}")
-//    public Article index(@PathVariable Long id) { // 하나만 가져올때
-//        return articleRepository.findById(id).orElse(null);
-//    }
+    @GetMapping("/api/articles/{id}")
+    public Article show(@PathVariable Long id) { // 하나만 가져올때
+        return articleService.show(id);
+    }
 //
-//    //POST
+    //POST
 //
-//    @PostMapping("/api/articles")
-//    public Article create(@RequestBody ArticleForm dto) { //RequestBody >> json 에서 데이터 받아오기
-//        Article article = dto.toEntity();
-//        return articleRepository.save(article);
-//    }
+    @PostMapping("/api/articles")
+    public ResponseEntity<Article> create(@RequestBody ArticleForm dto) { //RequestBody >> json 에서 데이터 받아오기
+        Article created = articleService.create(dto);
+        return (created!=null)?
+                ResponseEntity.status(HttpStatus.OK).body(created):
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 //
-//    @PatchMapping("/api/articles/{id}")
-//    public ResponseEntity<Article> patch(@PathVariable Long id, @RequestBody ArticleForm dto) {
-//
-//        // Response 상태코드를 반환 할 수 있는 ResponseEntity
-//        // 1. 수정용 Entity 생성
-//        Article article = dto.toEntity();
-//        log.info("id : {} , article : {}", id, article.toString());
-//
-//        // 2. 대상 Entity 조회
-//        Article target = articleRepository.findById(id).orElse(null);
-//
-//        // 3. 잘못된 요청 처리 (대상이 없거나 id 가 다른 경우)
-//        if (target == null || id != article.getId()) {
-//            //400. 잘못된 요청 응답!
-//            log.info("잘못된 요청! id : {}, article : {}", id, article.toString());
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 잘못되면 오류 전송
-//        }
-//        // 4. 정상 업데이트 및 정상 응답(200)
-//
-//        target.patch(article); // Article Entity에 patch함수 생성 *없는 부분 null값 되는것을 방지
-//
-//        Article updated = articleRepository.save(target);
-//        return ResponseEntity.status(HttpStatus.OK).body(updated); // HttpStatus가 맞으면 body를 업데이트
-//    }
-//
-//    //DELETE
-//
-//    @DeleteMapping("/api/articles/{id}")
-//    public ResponseEntity<Article> delete(@PathVariable Long id) {
-//        //대상 찾기
-//        Article target = articleRepository.findById(id).orElse(null);
-//
-//        // 잘못된 요청 처리
-//        if (target == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
-//
-//        //대상 삭제
-//        articleRepository.delete(target);
-//        return ResponseEntity.status(HttpStatus.OK).build();
-//    }
-//
+    @PatchMapping("/api/articles/{id}")
+    public ResponseEntity<Article> update(@PathVariable Long id, @RequestBody ArticleForm dto) {
+        Article updated = articleService.update(id, dto);
+        return (updated != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(updated) :
+                ResponseEntity.status((HttpStatus.BAD_REQUEST)).build();
+
+    }
+    //DELETE
+
+    @DeleteMapping("/api/articles/{id}")
+    public ResponseEntity<Article> delete(@PathVariable Long id) {
+        Article deleted = articleService.delete(id);
+        return (deleted != null) ?
+                ResponseEntity.status(HttpStatus.NO_CONTENT).build() :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    //트랜잭션 transacion -> 실패시 롤백 !
+    @PostMapping("/api/transaction-test")
+    public ResponseEntity<List<Article>> transactionTest(@RequestBody List<ArticleForm> dtos) {
+        // <<List<Article>>인 이유는 2중 리스트 이기 떄문.
+        // ex) 리스트 ( 리스트(예약 날짜) 리스트 (예약 시간) . . . )
+        List<Article> createdList = articleService.createArticles(dtos);
+
+
+        return (createdList != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(createdList) :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
 }
