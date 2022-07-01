@@ -3,9 +3,12 @@ package com.example.firstproject.dto;
 
 import com.example.firstproject.entity.Article;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-
+@NoArgsConstructor // RequestBody
+@Setter// RequestBody
 @AllArgsConstructor // this. 함수 대신 리팩토리 어노테이션
 @ToString // toString 리팩토리 어노테이션
 public class ArticleForm {
