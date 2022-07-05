@@ -13,9 +13,10 @@ import lombok.ToString;
 @ToString // toString 리팩토리 어노테이션
 public class ArticleForm {
 
+    private Long id;
     private String title;
     private String content;
-    private Long id;
+
 
     /*
     public ArticleForm(String title, String content) {
