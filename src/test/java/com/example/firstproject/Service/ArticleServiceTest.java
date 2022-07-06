@@ -1,4 +1,4 @@
-package com.example.firstproject.Service;
+package com.example.firstproject.service;
 
 import com.example.firstproject.dto.ArticleForm;
 import com.example.firstproject.entity.Article;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static jdk.nashorn.internal.objects.Global.println;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest // 해당클래스는 스프링 부트와 연동되어 테스팅 됨
