@@ -1,8 +1,10 @@
 package com.example.firstproject.controller;
 
 import com.example.firstproject.dto.ArticleForm;
+import com.example.firstproject.dto.CommentDto;
 import com.example.firstproject.entity.Article;
 import com.example.firstproject.repository.ArticleRepository;
+import com.example.firstproject.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,8 @@ public class ArticleController {
     @Autowired // 스프링 부트가 미리 생성해놓은 객체를 가져다가 자동연결 원래
     private ArticleRepository articleRepository;// 자바에는 밑에 repositou에 new로 객체를 생성해야되지만 알아서 생성
 
+    @Autowired
+    private CommentService commentService; // commentService를 쓰기위해 선언
 
     @GetMapping("/articles/new")
     public String newArticleForm() {
@@ -58,8 +62,14 @@ public class ArticleController {
             //Optional<Article> articleEntity = articleRepository.findById(id);
                 // return 타입이 달라서 Optional
 
+            // commentDtos를 모델에 등록하지 않아서 댓글이 안나오므로
+            // controller에 모델의 데이터를 입력해야됨.
+            List<CommentDto> commentDtos = commentService.comments(id);
+
+
             //2. 가져온 데이터를 모델에 등록
             model.addAttribute("article",articleEntity);
+            model.addAttribute("commentDtos",commentDtos); // 댓글을 등록
 
             //3. 보여줄 페이지를 설정
             return "articles/show";
@@ -113,7 +123,7 @@ public class ArticleController {
 
     @GetMapping("/articles/{id}/delete") //공식적으로 지원을 안하므로
         // Get방식을 사용하기 위해 DeleteMapping이 아닌 Get
-    public String Delete(@PathVariable Long id, RedirectAttributes rttr) {
+    public String delete(@PathVariable Long id, RedirectAttributes rttr) {
         //RedirectAttributes rttr로 메세지를 보내줌
         log.info("삭제 명령이 내려졌음.");
 
@@ -127,6 +137,6 @@ public class ArticleController {
             //메세지 출력 함수 addFlashAttribute
         }
         //3. 결과 페이지로 리다이렉트
-        return "redirect:/articles/";
+        return "redirect:/articles";
     }
 }
